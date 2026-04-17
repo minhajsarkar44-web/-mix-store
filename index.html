@@ -3,103 +3,156 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MiX Store Pro</title>
+    <title>MiX Store Pro | Premium APK Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        body { background: #020617; color: #f8fafc; font-family: sans-serif; }
-        .glass { background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
-        .app-card { background: #0f172a; border-radius: 20px; padding: 15px; border: 1px solid #1e293b; text-align: center; }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+        body { background: #010409; color: #E6EDF3; font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; }
+        .glass-nav { background: rgba(1, 4, 9, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .app-card { background: #0d1117; border: 1px solid #30363d; border-radius: 24px; transition: 0.3s; padding: 20px; text-align: center; }
+        .app-card:active { transform: scale(0.95); background: #161b22; }
+        .cyber-btn { background: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%); color: #000; font-weight: 800; border-radius: 12px; }
+        .shimmer { background: linear-gradient(90deg, #0d1117 25%, #161b22 50%, #0d1117 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+        .modal-bg { background: rgba(0,0,0,0.95); backdrop-blur: 10px; }
     </style>
 </head>
-<body class="pb-20">
+<body class="pb-24">
 
-    <nav class="glass sticky top-0 z-50 p-4 flex justify-between items-center">
-        <h1 class="font-black text-xl tracking-tighter">MiX <span class="text-indigo-500">STORE</span></h1>
-        <div onclick="openLogin()" id="user-icon" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center border border-indigo-500">
-            <i class="fa-solid fa-user text-xs"></i>
+    <nav class="glass-nav sticky top-0 z-50 px-6 py-5 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 cyber-btn flex items-center justify-center rounded-xl shadow-[0_0_15px_rgba(56,189,248,0.4)]">
+                <i class="fa-solid fa-bolt-lightning text-lg"></i>
+            </div>
+            <h1 class="text-2xl font-black tracking-tighter italic">MiX<span class="text-sky-400">PRO</span></h1>
+        </div>
+        <div onclick="openAuth()" id="p-icon" class="w-11 h-11 rounded-2xl bg-[#161b22] border border-[#30363d] flex items-center justify-center cursor-pointer">
+            <i class="fa-solid fa-user-ninja text-gray-400"></i>
         </div>
     </nav>
 
-    <div class="p-6">
-        <h2 id="title" class="text-2xl font-bold mb-1">Loading Store...</h2>
-        <p id="desc" class="text-gray-500 text-xs mb-6">Connecting to database</p>
-        
-        <div id="grid" class="grid grid-cols-2 gap-4">
-            </div>
-    </div>
+    <header class="px-6 pt-8 pb-4">
+        <h2 id="main-title" class="text-4xl font-extrabold tracking-tight mb-2 shimmer-text">Premium Hub</h2>
+        <p id="sub-title" class="text-gray-500 font-medium">Downloading excellence, one APK at a time.</p>
+    </header>
 
-    <div id="login-modal" class="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-6 hidden">
-        <div class="glass w-full max-w-xs p-8 rounded-[30px] text-center">
-            <h3 class="text-xl font-bold mb-6">MEMBER LOGIN</h3>
-            
-            <div id="step-1">
-                <input type="email" id="email" placeholder="Enter Gmail" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-4 mb-4 text-center">
-                <button onclick="sendOTP()" id="s-btn" class="w-full py-4 bg-indigo-600 rounded-xl font-bold">SEND OTP</button>
-            </div>
-
-            <div id="step-2" class="hidden">
-                <input type="text" id="otp" placeholder="Enter OTP" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-4 mb-4 text-center tracking-widest font-bold">
-                <button onclick="verifyOTP()" class="w-full py-4 bg-green-600 rounded-xl font-bold">VERIFY & ENTER</button>
-            </div>
-            
-            <button onclick="openLogin()" class="mt-6 text-gray-500 text-xs uppercase">Close</button>
+    <div class="px-6 mb-8">
+        <div class="relative group">
+            <i class="fa-solid fa-magnifying-glass absolute left-5 top-1/2 -translate-y-1/2 text-gray-600"></i>
+            <input type="text" onkeyup="filterApps(this.value)" placeholder="Search 5,000+ premium mods..." class="w-full bg-[#0d1117] border border-[#30363d] rounded-2xl py-4.5 pl-14 pr-6 focus:outline-none focus:border-sky-500/50 transition-all font-semibold">
         </div>
     </div>
 
+    <div id="grid" class="grid grid-cols-2 md:grid-cols-4 gap-4 px-6">
+        <div class="shimmer h-48 rounded-3xl"></div>
+        <div class="shimmer h-48 rounded-3xl"></div>
+    </div>
+
+    <div id="auth-modal" class="fixed inset-0 z-[100] modal-bg flex items-center justify-center p-6 hidden">
+        <div class="bg-[#0d1117] w-full max-w-sm p-10 rounded-[40px] border border-[#30363d] shadow-2xl relative">
+            <button onclick="openAuth()" class="absolute top-6 right-8 text-gray-500 text-xl"><i class="fa-solid fa-xmark"></i></button>
+            <div class="text-center mb-8">
+                <h3 class="text-3xl font-black italic mb-2">ACCESS<span class="text-sky-400">MiX</span></h3>
+                <p class="text-gray-500 text-sm">Enter your credentials to unlock VIP.</p>
+            </div>
+            
+            <div id="email-step">
+                <input type="email" id="u-email" placeholder="official@gmail.com" class="w-full bg-[#161b22] border border-[#30363d] rounded-2xl p-5 mb-5 text-center font-bold focus:outline-none focus:border-sky-500">
+                <button onclick="sendOTP()" id="s-btn" class="cyber-btn w-full py-5 text-black tracking-widest uppercase">GET ACCESS KEY</button>
+            </div>
+
+            <div id="otp-step" class="hidden">
+                <input type="text" id="u-otp" placeholder="••••••" class="w-full bg-[#161b22] border border-[#30363d] rounded-2xl p-5 mb-5 text-center text-3xl font-black tracking-[0.5em] focus:outline-none">
+                <button onclick="verifyOTP()" class="bg-white text-black w-full py-5 rounded-2xl font-black tracking-widest uppercase">VERIFY VIP</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed bottom-0 left-0 w-full glass-nav border-t border-white/5 flex justify-around py-5 z-40 rounded-t-[35px]">
+        <button onclick="location.reload()" class="text-sky-400 flex flex-col items-center gap-1"><i class="fa-solid fa-house-chimney text-xl"></i><span class="text-[9px] font-extrabold uppercase tracking-tighter">Home</span></button>
+        <button class="text-gray-600 flex flex-col items-center gap-1"><i class="fa-solid fa-fire-flame-curved text-xl"></i><span class="text-[9px] font-extrabold">Trending</span></button>
+        <button class="text-gray-600 flex flex-col items-center gap-1"><i class="fa-solid fa-compass text-xl"></i><span class="text-[9px] font-extrabold">Explore</span></button>
+        <button onclick="openAuth()" class="text-gray-600 flex flex-col items-center gap-1"><i class="fa-solid fa-crown text-xl"></i><span class="text-[9px] font-extrabold">VIP</span></button>
+    </div>
+
     <script>
-        let storeData = [];
+        let fullApps = [];
+        let sessionEmail = "";
 
-        function openLogin() { document.getElementById('login-modal').classList.toggle('hidden'); }
+        function openAuth() { document.getElementById('auth-modal').classList.toggle('hidden'); }
 
-        async function loadStore() {
+        async function initStore() {
             try {
                 const res = await fetch('/api/data');
                 const data = await res.json();
-                document.getElementById('title').innerText = data.store_config.section_title;
-                document.getElementById('desc').innerText = data.store_config.sub_title;
-                render(data.apps);
-            } catch(e) { document.getElementById('title').innerText = "Update Required!"; }
+                fullApps = data.apps;
+                document.getElementById('main-title').innerText = data.store_config.section_title;
+                document.getElementById('sub-title').innerText = data.store_config.sub_title;
+                renderApps(fullApps);
+                if(localStorage.getItem('mix_vip')) {
+                    document.getElementById('p-icon').innerHTML = '<i class="fa-solid fa-crown text-yellow-500"></i>';
+                }
+            } catch (e) {
+                document.getElementById('grid').innerHTML = '<p class="col-span-2 text-center text-red-500 font-bold p-10">ERROR: Connect Admin Panel to Supabase!</p>';
+            }
         }
 
-        function render(apps) {
-            const g = document.getElementById('grid');
-            g.innerHTML = apps.map(a => `
+        function renderApps(list) {
+            const grid = document.getElementById('grid');
+            grid.innerHTML = list.map(a => `
                 <div class="app-card">
-                    <img src="${a.img}" class="w-16 h-16 mx-auto rounded-xl mb-3 object-cover">
-                    <h4 class="text-xs font-bold truncate">${a.name}</h4>
-                    <p class="text-[10px] text-gray-500 mb-3">${a.size}</p>
-                    <button onclick="location.href='${a.link}'" class="w-full py-2 bg-indigo-500/10 text-indigo-400 rounded-lg text-[10px] font-bold border border-indigo-500/20">GET</button>
+                    <img src="${a.img}" class="w-24 h-24 mx-auto rounded-[30px] mb-5 object-cover shadow-2xl border border-white/5">
+                    <h4 class="text-sm font-extrabold truncate px-2">${a.name}</h4>
+                    <p class="text-[10px] text-sky-400 font-black mb-5 uppercase tracking-widest mt-1">${a.size}</p>
+                    <button onclick="downloadLink('${a.link}', '${a.name}')" class="w-full py-3.5 rounded-xl bg-[#161b22] border border-[#30363d] text-[10px] font-black tracking-widest hover:bg-white hover:text-black transition-all">GET</button>
                 </div>
             `).join('');
         }
 
+        function downloadLink(url, name) {
+            Swal.fire({
+                title: 'Verifying Link...',
+                text: `Fetching secure node for ${name}`,
+                timer: 1800,
+                showConfirmButton: false,
+                background: '#0d1117',
+                color: '#fff',
+                didOpen: () => Swal.showLoading()
+            }).then(() => { window.location.href = url; });
+        }
+
+        function filterApps(q) {
+            const filtered = fullApps.filter(a => a.name.toLowerCase().includes(q.toLowerCase()));
+            renderApps(filtered);
+        }
+
         async function sendOTP() {
-            const e = document.getElementById('email').value;
-            if(!e) return;
-            document.getElementById('s-btn').innerText = "SENDING...";
-            const res = await fetch(`/api/proxy/send?email=${e}`);
+            sessionEmail = document.getElementById('u-email').value;
+            if(!sessionEmail) return;
+            const btn = document.getElementById('s-btn');
+            btn.innerText = "REQUESTING ACCESS...";
+            const res = await fetch(`/api/proxy/send?email=${sessionEmail}`);
             if(res.ok) {
-                document.getElementById('step-1').classList.add('hidden');
-                document.getElementById('step-2').classList.remove('hidden');
-                Swal.fire('Success', 'Check your email for OTP', 'success');
+                document.getElementById('email-step').classList.add('hidden');
+                document.getElementById('otp-step').classList.remove('hidden');
+                Swal.fire({ title: 'ACCESS KEY SENT', icon: 'success', background: '#0d1117', color: '#fff' });
             }
         }
 
         async function verifyOTP() {
-            const e = document.getElementById('email').value;
-            const o = document.getElementById('otp').value;
-            const res = await fetch(`/api/proxy/verify?email=${e}&otp=${o}`);
+            const otp = document.getElementById('u-otp').value;
+            const res = await fetch(`/api/proxy/verify?email=${sessionEmail}&otp=${otp}`);
             if(res.ok) {
-                localStorage.setItem('user', 'true');
+                localStorage.setItem('mix_vip', 'true');
                 location.reload();
             } else {
-                Swal.fire('Error', 'Wrong OTP', 'error');
+                Swal.fire({ title: 'INVALID KEY', icon: 'error', background: '#0d1117' });
             }
         }
 
-        window.onload = loadStore;
+        window.onload = initStore;
     </script>
 </body>
 </html>
