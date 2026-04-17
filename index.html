@@ -3,200 +3,154 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MiX Store | Next-Gen APK Hub</title>
+    <title>MiX STORE | Premium APK</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         body { background-color: #0F172A; color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; }
-        .glass { background: rgba(30, 41, 59, 0.6); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .cyber-gradient { background: linear-gradient(135deg, #6366F1 0%, #A855F7 100%); }
-        .nav-active { color: #818CF8; filter: drop-shadow(0 0 8px #818CF8); }
-        .app-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .app-card:hover { transform: scale(1.02); border-color: #6366F1; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-page { animation: fadeIn 0.5s ease-out forwards; }
+        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .cyber-btn { background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%); transition: all 0.3s; }
+        .cyber-btn:hover { transform: translateY(-2px); box-shadow: 0 0 20px rgba(124, 58, 237, 0.4); }
+        .input-box { background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .input-box:focus { border-color: #6366f1; outline: none; }
     </style>
 </head>
 <body class="pb-24">
 
-    <div id="login-modal" class="fixed inset-0 z-[100] bg-slate-950/90 flex items-center justify-center p-6 hidden backdrop-blur-md">
-        <div class="glass w-full max-w-sm p-8 rounded-[2rem] text-center border-indigo-500/30">
-            <div class="w-16 h-16 cyber-gradient rounded-2xl mx-auto mb-6 flex items-center justify-center shadow-lg shadow-indigo-500/40">
-                <i class="fas fa-user-shield text-2xl"></i>
-            </div>
-            <h2 id="auth-title" class="text-2xl font-black mb-2 tracking-tight">SECURE LOGIN</h2>
-            <p id="auth-desc" class="text-gray-400 text-sm mb-8">Enter your email to join MiX Store</p>
+    <div id="login-modal" class="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-6 hidden">
+        <div class="glass w-full max-w-sm p-8 rounded-[2.5rem] text-center border-indigo-500/20">
+            <h2 id="modal-title" class="text-3xl font-black mb-2 tracking-tighter">MiX <span class="text-indigo-500">LOGIN</span></h2>
+            <p id="modal-desc" class="text-gray-400 text-sm mb-8">Enter email to receive OTP</p>
             
             <div id="email-group">
-                <input type="email" id="user-email" placeholder="Enter email address" class="w-full bg-slate-900/50 border border-slate-700 rounded-2xl py-4 px-5 mb-4 focus:outline-none focus:border-indigo-500 transition-all text-center">
-                <button onclick="handleSendOTP()" id="send-btn" class="cyber-gradient w-full py-4 rounded-2xl font-bold shadow-lg">SEND OTP</button>
+                <input type="email" id="user-email" placeholder="example@gmail.com" class="w-full input-box rounded-2xl py-4 px-6 mb-5 text-center">
+                <button onclick="handleSendOTP()" id="send-btn" class="cyber-btn w-full py-4 rounded-2xl font-bold">SEND OTP</button>
             </div>
 
-            <div id="otp-group" class="hidden">
-                <div class="flex justify-center gap-2 mb-6">
-                    <input type="text" id="user-otp" maxlength="6" placeholder="******" class="w-full bg-slate-900/50 border border-slate-700 rounded-2xl py-4 px-5 focus:outline-none focus:border-purple-500 transition-all text-center text-2xl tracking-[1em] font-black">
-                </div>
-                <button onclick="handleVerifyOTP()" class="bg-white text-slate-950 w-full py-4 rounded-2xl font-bold hover:bg-gray-200 transition-all">VERIFY & ENTER</button>
-                <button onclick="resetAuth()" class="mt-4 text-xs text-gray-500 hover:text-indigo-400">Wrong email? Change it</button>
+            <div id="otp-group" class="hidden animate-page">
+                <input type="text" id="user-otp" placeholder="Enter 6-digit OTP" class="w-full input-box rounded-2xl py-4 px-6 mb-5 text-center text-xl font-bold tracking-widest">
+                <button onclick="handleVerifyOTP()" id="verify-btn" class="w-full bg-white text-black py-4 rounded-2xl font-bold hover:bg-gray-200">VERIFY NOW</button>
+                <button onclick="resetUI()" class="mt-4 text-xs text-gray-500 underline">Change Email</button>
             </div>
 
-            <button onclick="toggleLoginModal()" class="mt-8 text-gray-500 text-xs font-bold uppercase tracking-widest hover:text-white transition-all">Continue as Guest</button>
+            <button onclick="toggleModal()" class="mt-8 text-gray-500 text-xs font-bold uppercase tracking-widest">Guest Mode</button>
         </div>
     </div>
 
-    <nav class="glass sticky top-0 z-50 px-6 py-5 flex justify-between items-center border-b border-white/5">
-        <div class="flex items-center gap-4">
-            <button onclick="toggleSidebar()" class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-white/5 transition-all">
-                <i class="fas fa-bars-staggered"></i>
-            </button>
-            <h1 class="text-2xl font-black tracking-tighter">MiX <span class="text-indigo-500">PRO</span></h1>
+    <nav class="glass sticky top-0 z-50 px-6 py-5 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <button onclick="toggleSidebar()" class="text-xl"><i class="fas fa-bars-staggered"></i></button>
+            <h1 class="text-2xl font-black tracking-tighter">MiX <span class="text-indigo-500">STORE</span></h1>
         </div>
-        <div id="user-status" onclick="toggleLoginModal()" class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center cursor-pointer hover:border-indigo-500 transition-all">
+        <div id="auth-status" onclick="toggleModal()" class="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center cursor-pointer">
             <i class="fas fa-user-circle text-xl text-gray-400"></i>
         </div>
     </nav>
 
-    <main class="container mx-auto px-6 pt-8 animate-page">
-        <div id="home-view">
-            <div class="mb-10">
-                <h2 id="section-name" class="text-3xl font-black mb-2 uppercase tracking-tighter">Featured</h2>
-                <div class="h-1 w-12 cyber-gradient rounded-full"></div>
+    <main class="container mx-auto px-6 py-8">
+        <div id="home-content">
+            <div class="mb-8">
+                <h2 id="section-title" class="text-3xl font-black uppercase tracking-tighter">Premium Apps</h2>
+                <p id="sub-title" class="text-gray-500 text-sm">Safe & Verified Mods</p>
+            </div>
+            
+            <div class="relative mb-10">
+                <i class="fas fa-search absolute left-5 top-4.5 text-gray-500"></i>
+                <input type="text" onkeyup="searchApps(this.value)" placeholder="Search anything..." class="w-full input-box rounded-2xl py-4 pl-14 pr-6">
             </div>
 
-            <div class="relative mb-10 group">
-                <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-indigo-400 transition-all"></i>
-                <input type="text" onkeyup="filterApps(this.value)" placeholder="Search for premium mods..." class="w-full bg-slate-900/80 border border-slate-800 rounded-[1.5rem] py-4.5 pl-14 pr-6 focus:outline-none focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-500/10 transition-all">
-            </div>
-
-            <div id="app-grid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-5">
-                </div>
+            <div id="app-grid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-5"></div>
         </div>
     </main>
 
-    <div class="fixed bottom-0 left-0 w-full glass border-t border-white/5 flex justify-around py-5 z-50 rounded-t-[2.5rem]">
-        <button onclick="navigate('home')" class="nav-active flex flex-col items-center gap-1">
-            <i class="fas fa-house text-xl"></i>
-            <span class="text-[9px] font-black uppercase tracking-widest">Home</span>
-        </button>
-        <button onclick="navigate('apps')" class="text-gray-500 flex flex-col items-center gap-1">
-            <i class="fas fa-shapes text-xl"></i>
-            <span class="text-[9px] font-black uppercase tracking-widest">Apps</span>
-        </button>
-        <button onclick="toggleSidebar()" class="text-gray-500 flex flex-col items-center gap-1">
-            <i class="fas fa-compass text-xl"></i>
-            <span class="text-[9px] font-black uppercase tracking-widest">Explore</span>
-        </button>
-        <button onclick="toggleLoginModal()" id="profile-tab" class="text-gray-500 flex flex-col items-center gap-1">
-            <i class="fas fa-user text-xl"></i>
-            <span class="text-[9px] font-black uppercase tracking-widest">Profile</span>
-        </button>
+    <div class="fixed bottom-0 left-0 w-full glass border-t border-white/5 flex justify-around py-5 z-50">
+        <button class="text-indigo-500"><i class="fas fa-home text-xl"></i></button>
+        <button onclick="toggleSidebar()" class="text-gray-500"><i class="fas fa-th-large text-xl"></i></button>
+        <button onclick="toggleModal()" class="text-gray-500"><i class="fas fa-user text-xl"></i></button>
     </div>
 
     <script>
-        let masterData = [];
-        let authEmail = "";
+        let appsData = [];
+        let tempEmail = "";
 
-        // --- Authentication Functions ---
+        // --- AUTH LOGIC WITH USER-AGENT ---
         async function handleSendOTP() {
-            authEmail = document.getElementById('user-email').value;
-            if(!authEmail.includes('@')) return Swal.fire('Error', 'Invalid Email', 'error');
+            tempEmail = document.getElementById('user-email').value;
+            if(!tempEmail) return Swal.fire('Error', 'Enter Email', 'error');
 
             const btn = document.getElementById('send-btn');
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> SENDING...';
-            btn.disabled = true;
-
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Sending...';
+            
             try {
-                const res = await fetch(`https://otp-script.vercel.app/api/send?email=${authEmail}&key=0011`);
-                if(res.ok) {
-                    document.getElementById('email-group').classList.add('hidden');
-                    document.getElementById('otp-group').classList.remove('hidden');
-                    document.getElementById('auth-title').innerText = "VERIFY OTP";
-                    document.getElementById('auth-desc').innerText = `OTP sent to ${authEmail}`;
-                    Swal.fire({ icon: 'success', title: 'Check Email', text: 'OTP has been sent!', background: '#1e293b', color: '#fff' });
-                }
-            } catch (e) { Swal.fire('Error', 'Server Error', 'error'); }
-            btn.disabled = false;
-            btn.innerText = "SEND OTP";
+                // ব্রাউজারের মাধ্যমে সরাসরি কল (ইউজার এজেন্ট অটোমেটিক যাবে)
+                const response = await fetch(`https://otp-script.vercel.app/api/send?email=${tempEmail}&key=0011`);
+                
+                // জিমেইলে ওটিপি গেলে আমরা এই পেজটি দেখাবো
+                document.getElementById('email-group').classList.add('hidden');
+                document.getElementById('otp-group').classList.remove('hidden');
+                document.getElementById('modal-title').innerHTML = 'MiX <span class="text-indigo-500">VERIFY</span>';
+                document.getElementById('modal-desc').innerText = `OTP sent to ${tempEmail}`;
+                
+                Swal.fire('Sent!', 'Check your Gmail inbox or spam', 'success');
+            } catch (e) {
+                Swal.fire('Server Error', 'API Blocked by Browser or Network', 'error');
+            }
+            btn.innerHTML = 'SEND OTP';
         }
 
         async function handleVerifyOTP() {
             const otp = document.getElementById('user-otp').value;
-            if(!otp) return;
-
+            const btn = document.getElementById('verify-btn');
+            
             try {
-                const res = await fetch(`https://otp-script.vercel.app/api/verify?email=${authEmail}&key=0001&otp=${otp}`);
+                const res = await fetch(`https://otp-script.vercel.app/api/verify?email=${tempEmail}&key=0001&otp=${otp}`);
                 if(res.ok) {
-                    localStorage.setItem('isLoggedIn', 'true');
-                    localStorage.setItem('userEmail', authEmail);
-                    location.reload(); 
+                    localStorage.setItem('mix_auth', 'true');
+                    Swal.fire('Welcome!', 'Logged in to MiX Store', 'success').then(() => location.reload());
                 } else {
-                    Swal.fire('Failed', 'Incorrect OTP', 'error');
+                    Swal.fire('Invalid!', 'Wrong OTP code', 'error');
                 }
-            } catch (e) { console.error(e); }
+            } catch (e) { Swal.fire('Error', 'Verification Failed', 'error'); }
         }
 
-        function resetAuth() {
+        function resetUI() {
             document.getElementById('email-group').classList.remove('hidden');
             document.getElementById('otp-group').classList.add('hidden');
-            document.getElementById('auth-title').innerText = "SECURE LOGIN";
         }
 
-        // --- Store Functions ---
+        // --- STORE LOGIC ---
         async function loadStore() {
-            try {
-                const res = await fetch('/api/data');
-                const data = await res.json();
-                masterData = data.apps;
-                document.getElementById('section-name').innerText = data.store_config.section_title;
-                displayApps(masterData);
-                checkSession();
-            } catch (e) { console.error("Store load failed"); }
+            const res = await fetch('/api/data');
+            const data = await res.json();
+            appsData = data.apps;
+            document.getElementById('section-title').innerText = data.store_config.section_title;
+            document.getElementById('sub-title').innerText = data.store_config.sub_title;
+            render(appsData);
+            if(localStorage.getItem('mix_auth')) {
+                document.getElementById('auth-status').innerHTML = '<i class="fas fa-check-circle text-green-500"></i>';
+            }
         }
 
-        function displayApps(apps) {
+        function render(items) {
             const grid = document.getElementById('app-grid');
-            grid.innerHTML = apps.map(app => `
-                <div class="glass p-4 rounded-[2rem] app-card border border-white/5">
-                    <img src="${app.img}" class="w-20 h-20 mx-auto rounded-2xl mb-4 shadow-2xl object-cover border border-white/10">
-                    <h4 class="text-sm font-black truncate px-1">${app.name}</h4>
-                    <p class="text-[10px] text-indigo-400 font-bold mb-4 uppercase tracking-widest">${app.size}</p>
-                    <button onclick="triggerDownload('${app.link}', '${app.name}')" class="w-full py-3 rounded-xl bg-white/5 hover:bg-indigo-500 hover:text-white transition-all text-[10px] font-black tracking-widest border border-white/5">
-                        DOWNLOAD
-                    </button>
+            grid.innerHTML = items.map(app => `
+                <div class="glass p-4 rounded-[2rem] text-center border border-white/5">
+                    <img src="${app.img}" class="w-16 h-16 mx-auto rounded-2xl mb-3 shadow-lg object-cover">
+                    <h4 class="text-xs font-bold truncate">${app.name}</h4>
+                    <p class="text-[9px] text-gray-500 mb-4">${app.size}</p>
+                    <button onclick="window.location.href='${app.link}'" class="cyber-btn w-full py-2.5 rounded-xl text-[10px] font-black tracking-widest">GET</button>
                 </div>
             `).join('');
         }
 
-        function triggerDownload(url, name) {
-            Swal.fire({
-                title: 'Downloading...',
-                text: `Fetching ${name} from MiX Servers`,
-                timer: 2000,
-                showConfirmButton: false,
-                willOpen: () => { Swal.showLoading(); },
-                background: '#0F172A',
-                color: '#fff'
-            }).then(() => {
-                window.location.href = url;
-            });
+        function searchApps(q) {
+            const f = appsData.filter(a => a.name.toLowerCase().includes(q.toLowerCase()));
+            render(f);
         }
 
-        function filterApps(q) {
-            const filtered = masterData.filter(a => a.name.toLowerCase().includes(q.toLowerCase()));
-            displayApps(filtered);
-        }
-
-        function checkSession() {
-            if(localStorage.getItem('isLoggedIn') === 'true') {
-                document.getElementById('user-status').innerHTML = '<i class="fas fa-check text-green-500"></i>';
-                document.getElementById('user-status').classList.add('border-green-500/50');
-            }
-        }
-
-        function toggleLoginModal() { document.getElementById('login-modal').classList.toggle('hidden'); }
-        function toggleSidebar() { /* Sidebar logic */ }
-        function navigate(page) { /* Navigation logic */ }
+        function toggleModal() { document.getElementById('login-modal').classList.toggle('hidden'); }
+        function toggleSidebar() { Swal.fire('Menu', 'Sidebar features coming soon!', 'info'); }
 
         window.onload = loadStore;
     </script>
