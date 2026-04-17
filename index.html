@@ -3,92 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="site-title">MiX Store</title>
+    <title>MiX Store Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { background-color: #0F172A; color: white; font-family: 'Inter', sans-serif; }
+        body { background-color: #0F172A; color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; }
         .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .cyber-btn { background: linear-gradient(90deg, #4F46E5 0%, #7C3AED 100%); }
-        .loader { border-top-color: #4F46E5; animation: spinner 1.5s linear infinite; }
-        @keyframes spinner { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .cyber-gradient { background: linear-gradient(90deg, #4F46E5 0%, #7C3AED 100%); }
+        /* Sidebar Styles */
+        #sidebar { transition: transform 0.3s ease-in-out; }
+        .active-nav { color: #4F46E5; border-bottom: 2px solid #4F46E5; }
     </style>
 </head>
-<body>
+<body class="pb-20">
 
-    <div id="m-status" class="hidden bg-red-600 text-white text-center py-2 text-sm font-bold"></div>
+    <div id="m-status" class="hidden bg-red-600 text-white text-center py-2 text-xs font-bold sticky top-0 z-[60]"></div>
 
-    <nav class="glass sticky top-0 z-50 px-6 py-4 flex justify-between items-center">
-        <h1 id="brand-name" class="text-2xl font-black tracking-tighter text-indigo-500">MiX <span class="text-white">STORE</span></h1>
-        <div class="flex gap-4">
-            <i class="fas fa-search text-gray-400 cursor-pointer"></i>
-            <i class="fas fa-bars text-gray-400 cursor-pointer"></i>
+    <nav class="glass sticky top-0 z-50 px-5 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <button onclick="toggleSidebar()" class="text-xl"><i class="fas fa-bars"></i></button>
+            <h1 id="brand-name" class="text-xl font-black tracking-tighter text-indigo-500">MiX <span class="text-white">STORE</span></h1>
+        </div>
+        <div class="flex items-center gap-4">
+            <i class="fas fa-bell text-gray-400"></i>
+            <img src="https://ui-avatars.com/api/?name=Admin&background=4F46E5&color=fff" class="w-8 h-8 rounded-full border border-indigo-500">
         </div>
     </nav>
 
-    <header class="container mx-auto px-6 py-12 text-center">
-        <h2 id="main-section-name" class="text-4xl md:text-5xl font-extrabold mb-3">Loading...</h2>
-        <p id="sub-section-name" class="text-gray-400 text-lg"></p>
+    <div id="sidebar-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/50 z-[61] hidden"></div>
+
+    <aside id="sidebar" class="fixed top-0 left-0 h-full w-64 glass z-[62] -translate-x-full p-6">
+        <div class="flex justify-between items-center mb-10">
+            <span class="font-bold text-lg">Menu</span>
+            <button onclick="toggleSidebar()"><i class="fas fa-times text-xl"></i></button>
+        </div>
+        <nav class="flex flex-col gap-6">
+            <a href="#" class="flex items-center gap-4 text-gray-300 hover:text-white transition"><i class="fas fa-home w-5"></i> Home</a>
+            <a href="#" class="flex items-center gap-4 text-gray-300 hover:text-white transition"><i class="fas fa-th-large w-5"></i> All Apps</a>
+            <a href="#" class="flex items-center gap-4 text-gray-300 hover:text-white transition"><i class="fas fa-bolt w-5"></i> Mod Features</a>
+            <a href="#" class="flex items-center gap-4 text-gray-300 hover:text-white transition"><i class="fas fa-shield-alt w-5"></i> Security Tools</a>
+            <hr class="border-slate-700">
+            <a href="#" class="flex items-center gap-4 text-gray-300 hover:text-white transition"><i class="fas fa-info-circle w-5"></i> About Us</a>
+        </nav>
+    </aside>
+
+    <header class="container mx-auto px-6 py-8">
+        <h2 id="section-title" class="text-3xl font-extrabold mb-2">Loading Store...</h2>
+        <p id="sub-title" class="text-gray-400 text-sm mb-6"></p>
+        
+        <div class="relative">
+            <i class="fas fa-search absolute left-4 top-4 text-gray-500"></i>
+            <input type="text" id="search-input" onkeyup="searchApps()" placeholder="Search apps, mods, tools..." 
+                   class="w-full bg-slate-800/50 border border-slate-700 rounded-2xl py-3.5 pl-12 pr-4 focus:outline-none focus:border-indigo-500 transition">
+        </div>
     </header>
 
-    <main class="container mx-auto px-6 pb-20">
-        <div id="app-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <main class="container mx-auto px-6">
+        <div id="app-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
             </div>
     </main>
 
-    <footer class="glass mt-10 py-8 text-center text-gray-500">
-        <p id="footer-credit"></p>
-    </footer>
+    <div class="fixed bottom-0 left-0 w-full glass border-t border-slate-800 flex justify-around py-3 z-50">
+        <button class="flex flex-col items-center gap-1 active-nav">
+            <i class="fas fa-home text-lg"></i>
+            <span class="text-[10px] uppercase font-bold tracking-widest">Home</span>
+        </button>
+        <button class="flex flex-col items-center gap-1 text-gray-500">
+            <i class="fas fa-box text-lg"></i>
+            <span class="text-[10px] uppercase font-bold tracking-widest">Apps</span>
+        </button>
+        <button class="flex flex-col items-center gap-1 text-gray-500">
+            <i class="fas fa-download text-lg"></i>
+            <span class="text-[10px] uppercase font-bold tracking-widest">Updates</span>
+        </button>
+        <button class="flex flex-col items-center gap-1 text-gray-500">
+            <i class="fas fa-user text-lg"></i>
+            <span class="text-[10px] uppercase font-bold tracking-widest">Me</span>
+        </button>
+    </div>
 
     <script>
-        // আপনার Vercel এপিআই লিঙ্ক এখানে দিন
-        const API_URL = "/api/data"; 
+        let allApps = [];
 
-        async function initStore() {
-            try {
-                const res = await fetch(API_URL);
-                const data = await res.json();
-
-                // ১. কনফিগারেশন সেটআপ
-                document.getElementById('site-title').innerText = data.store_config.app_name;
-                document.getElementById('brand-name').innerHTML = data.store_config.app_name.replace(" ", " <span class='text-white'>") + "</span>";
-                document.getElementById('main-section-name').innerText = data.store_config.section_title;
-                document.getElementById('sub-section-name').innerText = data.store_config.sub_title;
-                document.getElementById('footer-credit').innerText = data.store_config.footer_text;
-
-                // ২. মেইনটেন্যান্স চেক
-                if(data.maintenance.is_active) {
-                    const mBox = document.getElementById('m-status');
-                    mBox.innerText = "⚠️ " + data.maintenance.message;
-                    mBox.classList.remove('hidden');
-                }
-
-                // ৩. অ্যাপ রেন্ডারিং
-                const grid = document.getElementById('app-grid');
-                grid.innerHTML = "";
-                
-                if(data.apps.length === 0) {
-                    grid.innerHTML = "<p class='col-span-full text-center text-gray-600'>No apps available right now.</p>";
-                }
-
-                data.apps.forEach(app => {
-                    grid.innerHTML += `
-                        <div class="glass p-5 rounded-3xl border border-slate-800 hover:border-indigo-500 transition duration-300">
-                            <img src="${app.img}" class="w-20 h-20 rounded-2xl mb-4 shadow-xl mx-auto" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2589/2589174.png'">
-                            <h4 class="text-center font-bold text-lg">${app.name}</h4>
-                            <p class="text-center text-xs text-gray-500 mb-4">v${app.version} | ${app.size}</p>
-                            <a href="${app.link}" target="_blank" class="cyber-btn block text-center py-3 rounded-xl font-bold text-sm shadow-lg shadow-indigo-500/30">
-                                DOWNLOAD
-                            </a>
-                        </div>
-                    `;
-                });
-
-            } catch (e) {
-                console.log("Error loading MiX Store");
-            }
+        function toggleSidebar() {
+            const sb = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sb.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
         }
-        window.onload = initStore;
+
+        async function fetchStoreData() {
+            try {
+                const res = await fetch('/api/data');
+                const data = await res.json();
+                allApps = data.apps;
+
+                // Set Config
+                document.getElementById('section-title').innerText = data.store_config.section_title;
+                document.getElementById('sub-title').innerText = data.store_config.sub_title;
+
+                if(data.maintenance.is_active) {
+                    const m = document.getElementById('m-status');
+                    m.innerText = data.maintenance.message;
+                    m.classList.remove('hidden');
+                }
+
+                renderApps(allApps);
+            } catch (e) { console.error("Data fetch failed"); }
+        }
+
+        function renderApps(apps) {
+            const grid = document.getElementById('app-grid');
+            grid.innerHTML = "";
+            apps.forEach(app => {
+                grid.innerHTML += `
+                    <div class="glass p-3 rounded-2xl flex flex-col items-center text-center animate-fade-in">
+                        <img src="${app.img}" class="w-16 h-16 rounded-xl mb-3 shadow-lg object-cover">
+                        <h4 class="font-bold text-sm truncate w-full">${app.name}</h4>
+                        <p class="text-[10px] text-gray-500 mb-3">${app.size}</p>
+                        <button onclick="startDownload('${app.link}')" class="cyber-gradient w-full py-2 rounded-lg text-xs font-bold">
+                            GET
+                        </button>
+                    </div>
+                `;
+            });
+        }
+
+        function searchApps() {
+            const term = document.getElementById('search-input').value.toLowerCase();
+            const filtered = allApps.filter(a => a.name.toLowerCase().includes(term));
+            renderApps(filtered);
+        }
+
+        function startDownload(url) {
+            // Real-time browser download trigger
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', ''); 
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        window.onload = fetchStoreData;
     </script>
 </body>
 </html>
