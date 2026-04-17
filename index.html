@@ -3,149 +3,163 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MiX Store Pro</title>
+    <title>MiX Store | Premium Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        body { background-color: #0F172A; color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        body { background-color: #0F172A; color: white; font-family: 'Inter', sans-serif; }
         .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
         .cyber-gradient { background: linear-gradient(90deg, #4F46E5 0%, #7C3AED 100%); }
-        /* Sidebar Styles */
-        #sidebar { transition: transform 0.3s ease-in-out; }
-        .active-nav { color: #4F46E5; border-bottom: 2px solid #4F46E5; }
+        .bottom-nav-active { color: #4F46E5; }
     </style>
 </head>
-<body class="pb-20">
+<body class="pb-24">
 
-    <div id="m-status" class="hidden bg-red-600 text-white text-center py-2 text-xs font-bold sticky top-0 z-[60]"></div>
+    <div id="login-modal" class="fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-6 hidden">
+        <div class="glass w-full max-w-md p-8 rounded-3xl text-center">
+            <h2 class="text-2xl font-bold mb-2">MiX LOGIN</h2>
+            <p class="text-gray-400 text-sm mb-6">Enter email to get OTP</p>
+            <input type="email" id="user-email" placeholder="example@gmail.com" class="w-full bg-slate-800 border border-slate-700 rounded-xl py-3 px-4 mb-4 focus:outline-none">
+            <div id="otp-section" class="hidden">
+                <input type="text" id="user-otp" placeholder="Enter OTP" class="w-full bg-slate-800 border border-slate-700 rounded-xl py-3 px-4 mb-4 focus:outline-none">
+            </div>
+            <button id="auth-btn" onclick="sendOTP()" class="cyber-gradient w-full py-3 rounded-xl font-bold">SEND OTP</button>
+            <button onclick="toggleLoginModal()" class="mt-4 text-gray-500 text-sm underline">Continue as Guest</button>
+        </div>
+    </div>
 
     <nav class="glass sticky top-0 z-50 px-5 py-4 flex justify-between items-center">
         <div class="flex items-center gap-3">
             <button onclick="toggleSidebar()" class="text-xl"><i class="fas fa-bars"></i></button>
-            <h1 id="brand-name" class="text-xl font-black tracking-tighter text-indigo-500">MiX <span class="text-white">STORE</span></h1>
+            <h1 class="text-xl font-black text-indigo-500">MiX <span class="text-white">STORE</span></h1>
         </div>
-        <div class="flex items-center gap-4">
-            <i class="fas fa-bell text-gray-400"></i>
-            <img src="https://ui-avatars.com/api/?name=Admin&background=4F46E5&color=fff" class="w-8 h-8 rounded-full border border-indigo-500">
+        <div id="user-profile" onclick="toggleLoginModal()" class="cursor-pointer">
+            <i class="fas fa-user-circle text-2xl text-gray-400"></i>
         </div>
     </nav>
 
-    <div id="sidebar-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/50 z-[61] hidden"></div>
-
-    <aside id="sidebar" class="fixed top-0 left-0 h-full w-64 glass z-[62] -translate-x-full p-6">
-        <div class="flex justify-between items-center mb-10">
-            <span class="font-bold text-lg">Menu</span>
+    <aside id="sidebar" class="fixed top-0 left-0 h-full w-64 glass z-[60] -translate-x-full transition-transform p-6">
+        <div class="flex justify-between items-center mb-8">
+            <span class="font-bold">MiX MENU</span>
             <button onclick="toggleSidebar()"><i class="fas fa-times text-xl"></i></button>
         </div>
         <nav class="flex flex-col gap-6">
-            <a href="#" class="flex items-center gap-4 text-gray-300 hover:text-white transition"><i class="fas fa-home w-5"></i> Home</a>
-            <a href="#" class="flex items-center gap-4 text-gray-300 hover:text-white transition"><i class="fas fa-th-large w-5"></i> All Apps</a>
-            <a href="#" class="flex items-center gap-4 text-gray-300 hover:text-white transition"><i class="fas fa-bolt w-5"></i> Mod Features</a>
-            <a href="#" class="flex items-center gap-4 text-gray-300 hover:text-white transition"><i class="fas fa-shield-alt w-5"></i> Security Tools</a>
-            <hr class="border-slate-700">
-            <a href="#" class="flex items-center gap-4 text-gray-300 hover:text-white transition"><i class="fas fa-info-circle w-5"></i> About Us</a>
+            <a href="#" onclick="showSection('home')" class="hover:text-indigo-400"><i class="fas fa-home mr-3"></i> Home</a>
+            <a href="#" onclick="showSection('apps')" class="hover:text-indigo-400"><i class="fas fa-box mr-3"></i> Apps</a>
+            <a href="#" class="hover:text-indigo-400"><i class="fas fa-shield-alt mr-3"></i> Premium Mods</a>
         </nav>
     </aside>
 
-    <header class="container mx-auto px-6 py-8">
-        <h2 id="section-title" class="text-3xl font-extrabold mb-2">Loading Store...</h2>
-        <p id="sub-title" class="text-gray-400 text-sm mb-6"></p>
-        
-        <div class="relative">
-            <i class="fas fa-search absolute left-4 top-4 text-gray-500"></i>
-            <input type="text" id="search-input" onkeyup="searchApps()" placeholder="Search apps, mods, tools..." 
-                   class="w-full bg-slate-800/50 border border-slate-700 rounded-2xl py-3.5 pl-12 pr-4 focus:outline-none focus:border-indigo-500 transition">
-        </div>
-    </header>
-
-    <main class="container mx-auto px-6">
-        <div id="app-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+    <main class="container mx-auto px-6 py-6" id="main-content">
+        <div id="home-view">
+            <h2 id="section-title" class="text-3xl font-bold mb-2">MiX Store</h2>
+            <p id="sub-title" class="text-gray-400 mb-6">Explore premium content</p>
+            <div class="relative mb-8">
+                <input type="text" onkeyup="searchApps(this.value)" placeholder="Search apps..." class="w-full bg-slate-800 border border-slate-700 rounded-2xl py-3 px-12 focus:outline-none">
+                <i class="fas fa-search absolute left-4 top-4 text-gray-500"></i>
             </div>
+            <div id="app-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+        </div>
     </main>
 
-    <div class="fixed bottom-0 left-0 w-full glass border-t border-slate-800 flex justify-around py-3 z-50">
-        <button class="flex flex-col items-center gap-1 active-nav">
-            <i class="fas fa-home text-lg"></i>
-            <span class="text-[10px] uppercase font-bold tracking-widest">Home</span>
-        </button>
-        <button class="flex flex-col items-center gap-1 text-gray-500">
-            <i class="fas fa-box text-lg"></i>
-            <span class="text-[10px] uppercase font-bold tracking-widest">Apps</span>
-        </button>
-        <button class="flex flex-col items-center gap-1 text-gray-500">
-            <i class="fas fa-download text-lg"></i>
-            <span class="text-[10px] uppercase font-bold tracking-widest">Updates</span>
-        </button>
-        <button class="flex flex-col items-center gap-1 text-gray-500">
-            <i class="fas fa-user text-lg"></i>
-            <span class="text-[10px] uppercase font-bold tracking-widest">Me</span>
-        </button>
+    <div class="fixed bottom-0 left-0 w-full glass border-t border-slate-800 flex justify-around py-4 z-50">
+        <button onclick="showSection('home')" class="bottom-nav-active"><i class="fas fa-home text-xl"></i></button>
+        <button onclick="showSection('apps')" class="text-gray-500"><i class="fas fa-th-large text-xl"></i></button>
+        <button onclick="toggleSidebar()" class="text-gray-500"><i class="fas fa-bars text-xl"></i></button>
+        <button onclick="toggleLoginModal()" class="text-gray-500"><i class="fas fa-user text-xl"></i></button>
     </div>
 
     <script>
-        let allApps = [];
+        let storeApps = [];
+        let isUserLoggedIn = false;
 
-        function toggleSidebar() {
-            const sb = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebar-overlay');
-            sb.classList.toggle('-translate-x-full');
-            overlay.classList.toggle('hidden');
+        // --- Auth Logic ---
+        async function sendOTP() {
+            const email = document.getElementById('user-email').value;
+            if(!email) return Swal.fire('Error', 'Enter Email', 'error');
+            
+            const res = await fetch(`https://otp-script.vercel.app/api/send?email=${email}&key=0011`);
+            if(res.ok) {
+                document.getElementById('otp-section').classList.remove('hidden');
+                const btn = document.getElementById('auth-btn');
+                btn.innerText = "VERIFY OTP";
+                btn.onclick = verifyOTP;
+                Swal.fire('Sent!', 'Check your email for OTP', 'success');
+            }
         }
 
+        async function verifyOTP() {
+            const email = document.getElementById('user-email').value;
+            const otp = document.getElementById('user-otp').value;
+            const res = await fetch(`https://otp-script.vercel.app/api/verify?email=${email}&key=0001&otp=${otp}`);
+            if(res.ok) {
+                isUserLoggedIn = true;
+                localStorage.setItem('mix_auth', 'true');
+                toggleLoginModal();
+                Swal.fire('Success', 'Logged in successfully', 'success');
+                updateUI();
+            } else {
+                Swal.fire('Error', 'Invalid OTP', 'error');
+            }
+        }
+
+        // --- Sidebar & Section Logic ---
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('-translate-x-full');
+        }
+
+        function toggleLoginModal() {
+            document.getElementById('login-modal').classList.toggle('hidden');
+        }
+
+        function showSection(section) {
+            // Real-time navigation logic
+            if(section === 'home') fetchStoreData();
+            toggleSidebar();
+        }
+
+        // --- Store Logic ---
         async function fetchStoreData() {
-            try {
-                const res = await fetch('/api/data');
-                const data = await res.json();
-                allApps = data.apps;
-
-                // Set Config
-                document.getElementById('section-title').innerText = data.store_config.section_title;
-                document.getElementById('sub-title').innerText = data.store_config.sub_title;
-
-                if(data.maintenance.is_active) {
-                    const m = document.getElementById('m-status');
-                    m.innerText = data.maintenance.message;
-                    m.classList.remove('hidden');
-                }
-
-                renderApps(allApps);
-            } catch (e) { console.error("Data fetch failed"); }
+            const res = await fetch('/api/data');
+            const data = await res.json();
+            storeApps = data.apps;
+            document.getElementById('section-title').innerText = data.store_config.section_title;
+            renderApps(storeApps);
         }
 
         function renderApps(apps) {
             const grid = document.getElementById('app-grid');
-            grid.innerHTML = "";
-            apps.forEach(app => {
-                grid.innerHTML += `
-                    <div class="glass p-3 rounded-2xl flex flex-col items-center text-center animate-fade-in">
-                        <img src="${app.img}" class="w-16 h-16 rounded-xl mb-3 shadow-lg object-cover">
-                        <h4 class="font-bold text-sm truncate w-full">${app.name}</h4>
-                        <p class="text-[10px] text-gray-500 mb-3">${app.size}</p>
-                        <button onclick="startDownload('${app.link}')" class="cyber-gradient w-full py-2 rounded-lg text-xs font-bold">
-                            GET
-                        </button>
-                    </div>
-                `;
-            });
+            grid.innerHTML = apps.map(app => `
+                <div class="glass p-4 rounded-2xl text-center">
+                    <img src="${app.img}" class="w-16 h-16 mx-auto rounded-xl mb-3 object-cover">
+                    <h4 class="text-sm font-bold truncate">${app.name}</h4>
+                    <p class="text-[10px] text-gray-500 mb-3">${app.size}</p>
+                    <button onclick="downloadApp('${app.link}')" class="cyber-gradient w-full py-2 rounded-lg text-xs font-bold">DOWNLOAD</button>
+                </div>
+            `).join('');
         }
 
-        function searchApps() {
-            const term = document.getElementById('search-input').value.toLowerCase();
-            const filtered = allApps.filter(a => a.name.toLowerCase().includes(term));
+        function downloadApp(url) {
+            // Direct Browser Download
+            window.location.href = url;
+        }
+
+        function searchApps(query) {
+            const filtered = storeApps.filter(a => a.name.toLowerCase().includes(query.toLowerCase()));
             renderApps(filtered);
         }
 
-        function startDownload(url) {
-            // Real-time browser download trigger
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', ''); 
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+        function updateUI() {
+            if(localStorage.getItem('mix_auth') === 'true') {
+                document.getElementById('user-profile').innerHTML = '<i class="fas fa-check-circle text-2xl text-green-500"></i>';
+            }
         }
 
-        window.onload = fetchStoreData;
+        window.onload = () => {
+            fetchStoreData();
+            updateUI();
+        };
     </script>
 </body>
 </html>
